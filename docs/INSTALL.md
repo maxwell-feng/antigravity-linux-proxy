@@ -1,28 +1,30 @@
-# 安装
+# Installation
 
-## 环境
+[English](INSTALL.md) | [简体中文](INSTALL-zh.md)
 
-- Linux x86_64 或 arm64
-- gcc、make、git
-- Go 1.25+，仅用于编译 graftcp
-- 已装 Antigravity 桌面版，默认路径 `/opt/antigravity`
-- 本地代理可用，默认 `127.0.0.1:7897`（Clash Verge 混合端口）
+## Requirements
 
-> 本仓库以 Antigravity App（桌面）**2.31.2** 实测。IDE 2.6.0 与 CLI 1.5.5 的适用情况见 [README 的“适用与版本”](../README.md#适用与版本)。
+- Linux x86_64 or arm64
+- gcc, make, git
+- Go 1.25+ (only to build graftcp)
+- Antigravity desktop installed, default path `/opt/antigravity`
+- A local proxy, default `127.0.0.1:7897` (Clash Verge mixed port)
 
-检查 Go：
+> Tested on Antigravity App (desktop) **2.31.2**. See "Compatibility and versions" in the [README](../README.md#compatibility-and-versions) for IDE 2.6.0 and CLI 1.5.5.
+
+Check Go:
 
 ```bash
 go version
 ```
 
-没有就装，例如 Debian/Ubuntu：
+If it's missing, install it, e.g. on Debian/Ubuntu:
 
 ```bash
 sudo apt install -y golang-go
 ```
 
-## 1. 编译 graftcp
+## 1. Build graftcp
 
 ```bash
 git clone https://github.com/hmgle/graftcp.git /tmp/graftcp
@@ -32,7 +34,7 @@ sudo install -m755 local/graftcp /usr/local/bin/graftcp
 graftcp --version
 ```
 
-## 2. 安装本仓库
+## 2. Install this repo
 
 ```bash
 git clone https://github.com/maxwell-feng/antigravity-linux-proxy.git
@@ -40,51 +42,51 @@ cd antigravity-linux-proxy
 sudo ./scripts/install.sh
 ```
 
-脚本做三件事：
+The script does three things:
 
-1. 检查 `graftcp`，没有就尝试用本机 Go 自动编译安装。
-2. 首次运行把 `language_server` 备份成 `language_server.real`。
-3. 写入包装脚本，之后每次启动 `language_server` 都经 graftcp。
+1. Checks for `graftcp`; if missing, builds and installs it with the local Go.
+2. On first run, backs up `language_server` to `language_server.real`.
+3. Writes a wrapper so every `language_server` start goes through graftcp.
 
-自定义代理：
+Custom proxy:
 
 ```bash
-# 换端口（SOCKS5）
+# change port (SOCKS5)
 sudo PROXY_PORT=7890 ./scripts/install.sh
 
-# HTTP 代理
+# HTTP proxy
 sudo PROXY_ADDR=127.0.0.1:7890 PROXY_TYPE=http ./scripts/install.sh
 ```
 
-## 3. 验证
+## 3. Verify
 
 ```bash
 ./scripts/check.sh
 ```
 
-然后启动 Antigravity，走 Google 登录。
+Then launch Antigravity and sign in with Google.
 
-## 升级后
+## After an update
 
-Antigravity 更新会重建 `language_server`，覆盖包装。重跑：
+An Antigravity update rebuilds `language_server` and overwrites the wrapper. Re-run:
 
 ```bash
 sudo ./scripts/repatch.sh
 ```
 
-## 在 Antigravity IDE 上安装
+## Install for Antigravity IDE
 
-Antigravity IDE（VS Code 二开，2.6.0 / 内核 1.107.0）的后端是 `~/.gemini/bin/agy`，`--hub` 会自我 daemon 化。不要直接改 `agy`，改为整包走 graftcp：
+Antigravity IDE (VS Code fork, 2.6.0 / core 1.107.0) uses `~/.gemini/bin/agy` as its backend, and `--hub` self-daemonizes. Don't modify `agy`; wrap the whole process tree with graftcp instead:
 
 ```bash
 sudo ./scripts/install-ide.sh
 ```
 
-脚本生成 `/usr/local/bin/antigravity-ide-proxy`（用 graftcp 包裹 `/opt/antigravity-ide/antigravity-ide`），并把菜单入口 `antigravity-ide.desktop` 的 `Exec` 指过去（原文件备份为 `.orig`）。IDE 的 `agy` 守护进程会被 graftcp 一并追踪。
+The script generates `/usr/local/bin/antigravity-ide-proxy` (wrapping `/opt/antigravity-ide/antigravity-ide` with graftcp) and points the menu entry `antigravity-ide.desktop` `Exec` to it (the original is backed up as `.orig`). The IDE's `agy` daemon is traced by graftcp as well.
 
-默认路径不是 `/opt/antigravity-ide/antigravity-ide` 时用 `IDE_BIN` 指定。
+If the default path is not `/opt/antigravity-ide/antigravity-ide`, set `IDE_BIN`.
 
-还原：
+Revert:
 
 ```bash
 sudo ./scripts/uninstall-ide.sh

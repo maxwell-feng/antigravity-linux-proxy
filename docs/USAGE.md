@@ -1,54 +1,56 @@
-# 使用
+# Usage
 
-## 日常
+[English](USAGE.md) | [简体中文](USAGE-zh.md)
 
-1. 确认代理在运行（默认 `127.0.0.1:7897`）。
-2. 从应用菜单启动 Antigravity。
-3. Google 登录。
+## Daily use
 
-安装后 `language_server` 已被 graftcp 包裹，登录不会再出现 `oauth2.googleapis.com/token` 超时。
+1. Make sure the proxy is running (default `127.0.0.1:7897`).
+2. Launch Antigravity from the app menu.
+3. Sign in with Google.
 
-## 命令
+After installation `language_server` is wrapped by graftcp, so login no longer fails with the `oauth2.googleapis.com/token` timeout.
+
+## Commands
 
 ```bash
-# 状态与连通性
+# status and connectivity
 ./scripts/check.sh
 
-# 换端口（重写包装）
+# change port (rewrites the wrapper)
 sudo PROXY_PORT=7890 ./scripts/install.sh
 
-# Antigravity 更新后重新包装
+# re-wrap after an Antigravity update
 sudo ./scripts/repatch.sh
 
-# 卸载，还原原始 language_server
+# uninstall, restore the original language_server
 sudo ./scripts/uninstall.sh
 ```
 
-## 回滚
+## Rollback
 
 ```bash
 sudo ./scripts/uninstall.sh
 ```
 
-等价于手动还原：
+Equivalent to restoring manually:
 
 ```bash
 sudo mv /opt/antigravity/resources/bin/language_server.real \
         /opt/antigravity/resources/bin/language_server
 ```
 
-## 排查
+## Troubleshooting
 
-- 启动卡住、LS 起不来：先 `./scripts/check.sh`，看 graftcp、包装脚本、端口是否正常。
-- 换了代理端口没生效：重跑 `install.sh` 带上新端口。
-- 登录仍超时：确认代理本身能到 Google，`graftcp --socks5 127.0.0.1:7897 curl -sI https://oauth2.googleapis.com/token`。
-- 要看 graftcp 细节：在 `language_server` 包装脚本里给 graftcp 加 `--enable-debug-log`。
+- Startup hangs or the LS won't start: run `./scripts/check.sh` and check graftcp, the wrapper, and the port.
+- Changed the proxy port but nothing happened: re-run `install.sh` with the new port.
+- Login still times out: make sure the proxy itself can reach Google, `graftcp --socks5 127.0.0.1:7897 curl -sI https://oauth2.googleapis.com/token`.
+- Want graftcp details: add `--enable-debug-log` to graftcp in the `language_server` wrapper.
 
 ## Antigravity IDE
 
-IDE 用 `/usr/local/bin/antigravity-ide-proxy` 启动（菜单「Antigravity IDE」已指向它），整棵进程树经 graftcp 走代理，`agy` 守护进程也在内。
+The IDE launches via `/usr/local/bin/antigravity-ide-proxy` (the "Antigravity IDE" menu entry points to it); the whole process tree goes through graftcp, including the `agy` daemon.
 
 ```bash
-sudo ./scripts/install-ide.sh     # 安装 / 换端口后重跑
-sudo ./scripts/uninstall-ide.sh   # 还原
+sudo ./scripts/install-ide.sh     # install / re-run after changing port
+sudo ./scripts/uninstall-ide.sh   # revert
 ```
