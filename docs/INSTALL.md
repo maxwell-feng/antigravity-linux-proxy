@@ -8,6 +8,8 @@
 - 已装 Antigravity 桌面版，默认路径 `/opt/antigravity`
 - 本地代理可用，默认 `127.0.0.1:7897`（Clash Verge 混合端口）
 
+> 本仓库以 Antigravity App（桌面）**2.31.2** 实测。IDE 2.6.0 与 CLI 1.5.5 的适用情况见 [README 的“适用与版本”](../README.md#适用与版本)。
+
 检查 Go：
 
 ```bash

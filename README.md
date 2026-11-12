@@ -24,11 +24,22 @@ Antigravity -> language_server(包装) -> graftcp -> SOCKS5(127.0.0.1:7897) -> G
 
 只代理 Antigravity 的后端进程，不改系统全局路由，不需要 TUN。
 
-## 适用
+## 适用与版本
 
-- Linux，x86_64 / arm64
-- Antigravity 桌面版（hub，非 VS Code 二开版）
-- 本地代理为 SOCKS5 或 HTTP，默认 `127.0.0.1:7897`
+| 产品 | 版本 | 情况 |
+|---|---|---|
+| Antigravity App（桌面 / hub） | 2.31.2 | 已实测（Linux x86_64，`language_server` 2.31.2） |
+| Antigravity IDE（独立版，VS Code 二开） | 2.6.0 | 原理相同，本仓库未实测；见下方说明 |
+| Antigravity CLI（`agy`） | 1.5.5 | 本脚本不适用；`agy` 是独立程序，需单独用 graftcp 包装 |
+
+- 系统：Linux，x86_64 / arm64
+- 代理：本地 SOCKS5 或 HTTP，默认 `127.0.0.1:7897`
+
+说明：
+
+- 实测对象是 Linux 桌面包 `Antigravity.tar.gz`，产品内部名 `antigravity`，版本 **2.31.2**。
+- Antigravity IDE **2.6.0** 的后端同样是 Go 程序、同样要换 OAuth 令牌，原理适用；但它的安装目录与后端二进制名跟桌面版不同，脚本默认路径不适用，需用 `LS_DIR` 指向实际目录、或手动把它的后端二进制用 graftcp 包裹。
+- Antigravity CLI 的 `agy` 不在应用的 `language_server` 路径下，本仓库脚本不覆盖。
 
 ## 安装
 
